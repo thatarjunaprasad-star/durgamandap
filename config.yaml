@@ -1,0 +1,64 @@
+# config.yaml
+# ------------------------------------------------------------
+# Durga Puja Mandap Entry Management – configuration file
+# ------------------------------------------------------------
+# Edit the values below to match your environment before running the app.
+# All paths are absolute or relative to the project root.
+
+# -------------------------------------------------------------------
+# Reservation system (how new visitor bookings are obtained)
+# -------------------------------------------------------------------
+reservation:
+  # If the reservation platform provides a REST API, configure it here.
+  api_endpoint: "https://your-reservation-service.com/api/reservations"
+  api_token: "YOUR_API_TOKEN"   # Replace with a real bearer token
+
+  # If there is no API, the app will fall back to headless‑browser scraping.
+  # Provide the URL of the booking page and the login credentials.
+  scrape_url: "https://your-reservation-service.com/reservations"
+  username: "your_username"
+  password: "your_password"
+
+# -------------------------------------------------------------------
+# Calendar integration – combine Google Calendar and/or Outlook/Exchange
+# -------------------------------------------------------------------
+calendar:
+  # ---- Google Calendar (service‑account authentication) ----
+  google:
+    credentials_json: "path/to/google_service_account_credentials.json"
+    token_json: "path/to/google_token.json"   # generated after first auth
+    calendar_id: "primary"                     # or a specific calendar ID
+
+  # ---- Outlook / Exchange (basic auth) ----
+  outlook:
+    email: "your_email@domain.com"
+    password: "YOUR_OUTLOOK_PASSWORD"
+    server: "outlook.office365.com"           # adjust if using on‑prem Exchange
+
+# -------------------------------------------------------------------
+# Email settings – used for sending the daily executive summary
+# -------------------------------------------------------------------
+email:
+  smtp_server: "smtp.gmail.com"
+  smtp_port: 587
+  sender: "your_email@domain.com"
+  recipient: "recipient@domain.com"
+  username: "your_email@domain.com"
+  password: "YOUR_EMAIL_PASSWORD"
+
+# -------------------------------------------------------------------
+# Scheduler timings – cron expressions (UTC)
+# -------------------------------------------------------------------
+# Fetch new reservations each morning at 06:00 UTC
+# Generate the daily summary at 07:00 UTC (after rule enforcement)
+schedule:
+  fetch_reservations: "0 6 * * *"
+  generate_summary: "0 7 * * *"
+
+# -------------------------------------------------------------------
+# Application settings
+# -------------------------------------------------------------------
+app:
+  debug: false            # set true for development, false for production
+  host: "0.0.0.0"
+  port: 5000

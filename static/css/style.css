@@ -1,0 +1,122 @@
+/* static/css/style.css */
+/* Classy Durga Puja themed dashboard with dynamic hue border */
+
+/* Global page background – transparent Durga Puja image */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background: url('/static/img/durga.jpg') center center / cover no-repeat fixed;
+    background-color: #fafafa; /* fallback */
+    color: #333;
+}
+
+/* Dynamic hue‑rotating border around the app */
+.app-wrapper {
+    position: relative;
+    max-width: 960px;
+    margin: 30px auto;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.app-wrapper::before {
+    content: "";
+    position: absolute;
+    top: -6px; left: -6px; right: -6px; bottom: -6px;
+    border: 6px solid;
+    border-image: linear-gradient(45deg, #ff0080, #ff8c00, #40e0d0, #ff0080) 1;
+    border-radius: 14px;
+    pointer-events: none;
+    animation: hueRotate 8s linear infinite;
+}
+
+@keyframes hueRotate {
+    from { filter: hue-rotate(0deg); }
+    to   { filter: hue-rotate(360deg); }
+}
+
+/* Layout: left panel for JSON, center panel for mantra */
+.content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+}
+
+.left-panel, .center-panel {
+    flex: 1;
+}
+
+.left-panel {
+    max-width: 45%;
+}
+
+.center-panel {
+    max-width: 45%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.85);
+    border-radius: 8px;
+    padding: 15px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.center-panel h2 {
+    margin-top: 0;
+    color: #2c3e50;
+}
+
+.mantra {
+    font-size: 1.4rem;
+    line-height: 1.6;
+    margin: 0;
+    color: #4a148c;
+}
+
+section {
+    margin-bottom: 0;
+}
+
+pre {
+    background: #f0f0f0;
+    padding: 1rem;
+    border-radius: 4px;
+    overflow-x: auto;
+    font-family: "Consolas", "Monaco", monospace;
+    font-size: 0.9rem;
+}
+
+#status ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+#status li {
+    padding: 0.3rem 0;
+    color: #555;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    color: #212121;
+}
+
+footer {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    color: #777;
+}

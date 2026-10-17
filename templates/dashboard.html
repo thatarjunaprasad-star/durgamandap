@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Real‑Time Pandal Footfall Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dark-theme.css">
+    <style>
+        /* Grid layout */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            padding: 1rem;
+        }
+        .gauge, .gate-card, .heatmap {
+            background: rgba(0,0,0,0.6);
+            border: 2px solid #b71c1c;          /* crimson accent */
+            border-radius: 8px;
+            padding: 1rem;
+            color: #fff;
+        }
+        .gauge .digit {
+            font-family: 'Digital-7', monospace;
+            font-size: 2.5rem;
+            color: #ffeb3b;                    /* marigold */
+        }
+        .gate-card h3 { margin-top:0; color:#ffd700; }   /* warm gold */
+    </style>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Simple‑heat (heat‑map) -->
+    <script src="https://cdn.jsdelivr.net/npm/simpleheat/simpleheat.js"></script>
+    <!-- SocketIO client -->
+    <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"
+            integrity="sha384-xxxx" crossorigin="anonymous"></script>
+</head>
+<body>
+    <header class="app-header">
+        <h1>🕉️ Durga Pandal – Live Footfall Dashboard</h1>
+    </header>
+
+    <div class="grid">
+
+        <!-- Live Flow Gauge -->
+        <section class="gauge">
+            <h2>Live Flow</h2>
+            <p>In‑Flow:  <span id="inFlow" class="digit">0</span></p>
+            <p>Out‑Flow: <span id="outFlow" class="digit">0</span></p>
+            <p>Net Count: <span id="netCount" class="digit">0</span></p>
+            <p>Capacity: <span id="capacityPct">0%</span></p>
+        </section>
+
+        <!-- Gate‑Wise Cards (will be filled dynamically) -->
+        <section id="gateCards" class="gate-cards">
+            <!-- JS will clone a template for each gate -->
+        </section>
+
+        <!-- Density Heatmap -->
+        <section class="heatmap">
+            <h2>Density Heatmap</h2>
+            <canvas id="heatmapCanvas" width="400" height="300"></canvas>
+        </section>
+    </div>
+
+    <footer>
+        <p>© 2026 Durga Pandal – Powered by Antigravity</p>
+    </footer>
+
+    <script>
+        // ----------------------------------------------------
+        // SocketIO connection & UI update logic
+        // ----------------------------------------------------
+        const socket = io();
+
+        // ---------- Gauge ----------
+        socket.on('footfall_update', function (data) {
+            document.getElementById('inFlow').textContent   = data.in_flow;
+            document.getElementById('outFlow').textContent  = data.out_flow;
+            document.getElementById('netCount').textContent = data.net;
+            document.getElementById('capacityPct').textContent = data.capacity_percent + '%';
+
+            // ----- Gate cards -----
+            const container = document.getElementById('gateCards');
+            container.innerHTML = '';   // clear previous
+            Object.entries(data.gates).forEach(([code, info]) => {
+                const card = document.createElement('div');
+                card.className = 'gate-card';
+                card.innerHTML = `
+                    <h3>Gate ${code}: ${info.name}</h3>
+                    <p>Velocity: <strong>${info.velocity} people/min</strong></p>
+                `;
+                container.appendChild(card);
+            });
+
+            // ----- Heatmap -----
+            const hm = new simpleheat(document.getElementById('heatmapCanvas'));
+            const points = data.heatmap.map(p => [p.x * 400, p.y * 300, p.value]); // scale to canvas
+            hm.data(points);
+            hm.max(1);
+            hm.radius(25, 25);
+            hm.draw();
+        });
+    </script>
+</body>
+</html>

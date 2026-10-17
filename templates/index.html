@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Durga Mandap Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="app-wrapper">
+        <header>
+            <h1>Durga Mandap Entry Dashboard</h1>
+        </header>
+        <div class="content">
+            <div class="left-panel">
+                <section>
+                    <h2>Latest Counts (JSON)</h2>
+                    {% if latest_json %}
+                        <pre>{{ latest_json }}</pre>
+                    {% else %}
+                        <p>No counts file found yet.</p>
+                    {% endif %}
+                </section>
+                <section id="status-section">
+                    <h2>Scheduler Status</h2>
+                    <div id="status"></div>
+                </section>
+            </div>
+            <div class="center-panel">
+                <h2>Durga Puja Mantra</h2>
+                <p class="mantra">Om Dum Durgayei Namaha</p>
+            </div>
+        </div>
+        <footer>
+            <p>© 2026 Durga Puja Mandap Management</p>
+        </footer>
+    </div>
+    <script>
+        fetch('/api/status')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('status');
+                el.innerHTML = '<ul>' + data.jobs.map(j => `<li>${j.id}: next run ${j.next_run}</li>`).join('') + '</ul>';
+            })
+            .catch(err => console.error(err));
+    </script>
+</body>
+</html>
